@@ -3,8 +3,10 @@ import asyncio
 
 def print_with_units(volts):
     scale = [1e5,1e5,1e5,11]
-    units = ['mA','mA','mA','V']
-    vals = ["{:.2f}".format(scale[i]*volts[i])+units[i] for i in range(4)]
+    mA = '{:.1f}mA'
+    V = '{:.3f}V'
+    units = [mA,mA,mA,V]
+    vals = [units[i].format(scale[i]*volts[i]) for i in range(4)]
     print(vals)
 
 
