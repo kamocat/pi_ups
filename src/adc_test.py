@@ -4,9 +4,10 @@ import asyncio
 async def main():
     adc = ADC()
     gain = [8,8,8,1]
-    while true:
+    print("Initialized")
+    while True:
         volts = await adc.get_all(gain)
         print(volts)
-        await asyncio.sleep(1000)
+        await asyncio.sleep(1)
 
 task = asyncio.run(main())

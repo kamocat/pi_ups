@@ -23,22 +23,19 @@ class ADC:
         cfg = (channel << 5) | gain | 0x88
         async with lock:
             self.bus.write_byte(self.addr, cfg)
-            while true:
-                await asyncio.sleep(70) #approx 1/15th of a second
-                #SMBus requires that we write to a register
-                #so we re-write the config byte without restarting the conversion
-                data = self.bus.read_i2c_block_data(self.addr,cfg&0x7f,3)
-                if(data[2] & 0x80):
-                    print("Conversion not completed.")
-                else:
-                    break
+            await asyncio.sleep(1/15) 
+            #SMBus requires that we write to a register
+            #so we re-write the config byte without restarting the conversion
+            data = self.bus.read_i2c_block_data(self.addr,cfg&0x7f,3)
+        if(data[2] & 0x80):
+            print("Conversion not completed.")
         
         #Convert to volts
-        scale = (0.5 ** gain) * 2.048
+        scale = (0.5 ** gain) * 0.001/16
         volts = data[0]<<8 | data[1] 
         volts *= scale
         return volts
 
-    async def get_all(gain):
-        return [await adc.get(i,gain[i]) for i in range(len(gain))]
+    async def get_all(self,gain):
+        return [await self.get(i,gain[i]) for i in range(len(gain))]
 
